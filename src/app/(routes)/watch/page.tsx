@@ -33,15 +33,17 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
       <div className="flex w-full flex-wrap justify-start gap-4 px-6 py-4">
         <div className="info flex flex-1 flex-col gap-4">
           <h2 className="w-full text-lg font-medium">{info.title}</h2>
-          <Link href={`/channel/${channel.id}`} className="flex w-full gap-2">
+          <Link href={`/channel/${channel?.id}`} className="flex w-full gap-2">
             <Avatar>
-              <AvatarImage src={channel.avatar[0].url} />
-              <AvatarFallback>{getInitialName(channel.name)}</AvatarFallback>
+              <AvatarImage src={channel?.avatar.at(0)?.url} />
+              <AvatarFallback>
+                {getInitialName(channel?.name ?? "P")}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <h3 className="flex items-center font-medium">
-                {channel.name}
-                {channel.isVerified && (
+                {channel?.name}
+                {channel?.isVerified && (
                   <MaterialIcon
                     filled
                     color="text-dawahplay"
@@ -54,7 +56,7 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
                 )}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {channel.subscribers}
+                {channel?.subscribers}
               </p>
             </div>
           </Link>

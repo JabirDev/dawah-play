@@ -1,7 +1,7 @@
 import { Playlist, Video } from "@/types/youtube";
 import { Innertube, UniversalCache } from "youtubei.js/web";
 import prismadb from "../prisma/prismadb";
-import { Channel } from "@prisma/client";
+import { Channel, Image } from "@prisma/client";
 
 export async function youtube(
   lang = "id",
@@ -161,7 +161,7 @@ export async function getVideoInfo(videoId: string): Promise<any> {
 
 export async function getChannelInfo(
   channelId: string,
-): Promise<Channel | null> {
+): Promise<(Channel & { avatar: Image[] }) | null> {
   const channel = await prismadb.channel.findUnique({
     where: {
       id: channelId,
