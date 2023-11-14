@@ -2,7 +2,6 @@ import "@/app/globals.css";
 import "shaka-player/dist/controls.css";
 
 import SiteHeader from "@/components/nav/site-header";
-import Sidebar from "@/components/nav/sidebar";
 import { SidebarProvider } from "@/providers/sidebar-provider";
 
 export default function HomeLayout({

@@ -27,7 +27,7 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
   const uri =
     "data:application/dash+xml;charset=utf-8;base64," + btoa(info.manifest);
   return (
-    <div className="max-w-screen flex flex-col items-center justify-center overflow-y-hidden">
+    <div className="max-w-screen flex w-full flex-col items-center justify-center overflow-y-hidden">
       <div className="w-full">
         {/* <VideoPlayer uri={uri} thumbnail={info.thumbnails[0].url} /> */}
         <YoutubeEmbed videoId={searchParams.v} />
