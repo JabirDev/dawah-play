@@ -1,5 +1,6 @@
 import { MaterialIcon } from "@/components/icons";
 import VideoPlayer from "@/components/player/video-player";
+import { YoutubeEmbed } from "@/components/player/youtube-embed";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { dynamicMetadata } from "@/lib/seo/metadata";
 import { getInitialName } from "@/lib/utils";
@@ -28,7 +29,8 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
   return (
     <div className="max-w-screen flex flex-col items-center justify-center overflow-y-hidden">
       <div className="w-full">
-        <VideoPlayer uri={uri} thumbnail={info.thumbnails[0].url} />
+        {/* <VideoPlayer uri={uri} thumbnail={info.thumbnails[0].url} /> */}
+        <YoutubeEmbed videoId={searchParams.v} />
       </div>
       <div className="flex w-full flex-wrap justify-start gap-4 px-6 py-4">
         <div className="info flex flex-1 flex-col gap-4">
