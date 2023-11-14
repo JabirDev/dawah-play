@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { getInitialName } from "@/lib/utils";
 import { Channel, Image as ImageDb } from "@prisma/client";
-import { Trash, Loader2 } from "lucide-react";
+import { Trash } from "lucide-react";
 import Image from "next/image";
 
 interface ChannelProps {
