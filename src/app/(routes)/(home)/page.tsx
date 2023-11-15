@@ -1,9 +1,5 @@
 import { auth } from "@/lib/auth/auth";
 
-import Image from "next/image";
-import HandlePlayer from "@/components/player/handle-player";
-import InfiniteVideos from "@/components/list/infinite-videos";
-import { ModeToggle } from "@/components/theme/mode";
 import { Suspense } from "react";
 import { VideoCardLoading } from "@/components/card/video";
 import RecentVideos from "@/components/list/recent-videos";

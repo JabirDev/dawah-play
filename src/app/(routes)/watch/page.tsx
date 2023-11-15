@@ -1,15 +1,17 @@
+import PlaylistVideos from "@/components/card/playlist-videos";
 import { MaterialIcon } from "@/components/icons";
 import VideoPlayer from "@/components/player/video-player";
 import { YoutubeEmbed } from "@/components/player/youtube-embed";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { dynamicMetadata } from "@/lib/seo/metadata";
 import { getInitialName } from "@/lib/utils";
-import { getChannelInfo, getVideoInfo } from "@/lib/yt/youtubei";
+import { getChannelInfo, getPlaylist, getVideoInfo } from "@/lib/yt/youtubei";
 import Link from "next/link";
 
 interface WatchProps {
   searchParams: {
     v: string;
+    list?: string;
   };
 }
 
@@ -26,6 +28,14 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
   const channel = await getChannelInfo(info.channel.id);
   const uri =
     "data:application/dash+xml;charset=utf-8;base64," + btoa(info.manifest);
+
+  let playlist;
+  if (searchParams.list) {
+    playlist = await getPlaylist(searchParams.list);
+    playlist.currentPlay = searchParams.v;
+    playlist.id = searchParams.list;
+  }
+
   return (
     <div className="max-w-screen flex w-full flex-col items-center justify-center overflow-y-hidden">
       <div className="w-full">
@@ -62,7 +72,7 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
               </p>
             </div>
           </Link>
-          <div className="description flex flex-col gap-2 rounded-md bg-neutral-100 p-4 dark:bg-neutral-900">
+          <div className="description flex flex-col gap-2 rounded-xl bg-neutral-100 p-4 dark:bg-neutral-900">
             <p className="font-bold">{`${info.view_count} • ${
               info.relative_date ?? info.published
             }`}</p>
@@ -72,7 +82,8 @@ const WatchPage: React.FC<WatchProps> = async ({ searchParams }) => {
           </div>
         </div>
         <div className="related w-1/3">
-          <h3>Related Video</h3>
+          {playlist && <PlaylistVideos {...playlist} />}
+          <h3>Related video</h3>
         </div>
       </div>
     </div>

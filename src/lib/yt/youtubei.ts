@@ -1,4 +1,4 @@
-import { Playlist, Video } from "@/types/youtube";
+import { Playlist, Video, VideoPlaylist } from "@/types/youtube";
 import { Innertube, UniversalCache } from "youtubei.js/web";
 import prismadb from "../prisma/prismadb";
 import { Channel, Image } from "@prisma/client";
@@ -100,6 +100,7 @@ export async function formattedVideos(videos: any): Promise<any> {
             return result;
           }
           if (type === "playlist") {
+            // console.log("playlist: ", item);
             const first_videos = item.first_videos.map((vid: any) => {
               return {
                 id: vid.id,
@@ -122,7 +123,7 @@ export async function formattedVideos(videos: any): Promise<any> {
       }
     }),
   );
-  console.log("list: ", await videoList);
+  // console.log("list: ", await videoList);
   const filtered = (await videoList).filter((v) => {
     if (v) return v;
   });
@@ -201,4 +202,36 @@ export async function searchQuery(query: string) {
   );
 
   return search;
+}
+
+export async function getPlaylistVideo(videos: any): Promise<VideoPlaylist[]> {
+  const videoList = Promise.all(
+    videos.map((video: any) => {
+      // console.log("vi: ", video);
+      const result = {
+        id: video.id,
+        index: video.index.text,
+        title: video.title.text,
+        thumbnails: video.thumbnails,
+        info: video.video_info.text,
+        duration: video.duration,
+      };
+      return result;
+    }),
+  );
+  return videoList;
+}
+
+export async function getPlaylist(id: string): Promise<any> {
+  const playlist = (await youtube()).getPlaylist(id);
+  const res = await playlist;
+  const videos = await getPlaylistVideo(res.items);
+  return {
+    title: res.info.title,
+    description: res.info.description,
+    total_items: res.info.total_items,
+    views: res.info.views,
+    last_updated: res.info.last_updated,
+    items: videos,
+  };
 }

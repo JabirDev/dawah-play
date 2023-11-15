@@ -3,15 +3,19 @@
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
-import VideoCard, { VideoCardLoading } from "@/components/card/video";
-import { Video, VideoList } from "@/types/youtube";
+import { VideoCardLoading } from "@/components/card/video-search";
+import { Playlist, Video, VideoList } from "@/types/youtube";
+import VideoSearch from "@/components/card/video-search";
+import PlaylistSearch from "@/components/card/playlist-search";
 
-interface InfiniteVideosProps {
+interface InfiniteSearch {
+  query: string;
   initialData: VideoList;
   loadMore: any;
 }
 
-const InfiniteVideos: React.FC<InfiniteVideosProps> = ({
+const InfiniteSearch: React.FC<InfiniteSearch> = ({
+  query,
   initialData,
   loadMore,
 }) => {
@@ -24,7 +28,7 @@ const InfiniteVideos: React.FC<InfiniteVideosProps> = ({
   async function loadMoreVideos() {
     const next = page + 1;
     const limit = 20;
-    const videos = await loadMore(next, limit);
+    const videos = await loadMore(query, next, limit);
     // console.log("videos: ", videos)
     if (videos?.items?.length) {
       setPage(next);
@@ -51,9 +55,13 @@ const InfiniteVideos: React.FC<InfiniteVideosProps> = ({
   // }
   return (
     <>
-      {videos.map((video: any) => (
-        <VideoCard video={video} key={video.id} />
-      ))}
+      {videos.map((item: Video | Playlist) =>
+        item.type === "video" ? (
+          <VideoSearch video={item as Video} key={item.id} />
+        ) : (
+          <PlaylistSearch playlist={item as Playlist} key={item.id} />
+        ),
+      )}
       <div ref={ref}>
         <VideoCardLoading count={4} />
       </div>
@@ -61,4 +69,4 @@ const InfiniteVideos: React.FC<InfiniteVideosProps> = ({
   );
 };
 
-export default InfiniteVideos;
+export default InfiniteSearch;

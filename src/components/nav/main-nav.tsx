@@ -1,21 +1,44 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useSidebar } from "@/hooks/use-sidebar";
+import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
-import { cn } from "@/lib/utils";
 import { BrandIcons } from "@/components/icons/brand-icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MaterialIcon } from "@/components/icons";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+
+const formSchema = z.object({
+  q: z.string().min(1),
+});
+
+type SearchFormValues = z.infer<typeof formSchema>;
 
 export function MainNav() {
-  const pathname = usePathname();
+  const router = useRouter();
   const sidebar = useSidebar();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q");
+
+  // console.log("searchParams: ", query);
+
+  const form = useForm<SearchFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { q: query ?? "" },
+  });
+
+  const onSubmitQuery = async (data: SearchFormValues) => {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/search?q=${data.q}`;
+    router.push(url);
+  };
 
   const handleHumbergerButton = () => {
     sidebar.isExpanded ? sidebar.onClose() : sidebar.onExpanded();
@@ -40,22 +63,37 @@ export function MainNav() {
         </span>
         {siteConfig.isBeta && <Badge variant="destructive">Beta</Badge>}
       </Link>
-      <div className="flex w-1/2 items-center rounded-xl border bg-neutral-100 dark:bg-neutral-900">
-        <Input
-          type="text"
-          placeholder="Search"
-          className="border-none bg-transparent focus-visible:border-none focus-visible:ring-transparent focus-visible:ring-offset-transparent"
-        />
-        <Button
-          type="submit"
-          variant="outline"
-          className="border-none bg-transparent"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmitQuery)}
+          className="flex w-1/2 items-center rounded-xl border bg-neutral-100 dark:bg-neutral-900"
         >
-          <MaterialIcon filled size="sm">
-            search
-          </MaterialIcon>
-        </Button>
-      </div>
+          <FormField
+            control={form.control}
+            name="q"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                  <Input
+                    placeholder="Search"
+                    className="w-full border-none bg-transparent focus-visible:border-none focus-visible:ring-transparent focus-visible:ring-offset-transparent"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            variant="outline"
+            className="border-none bg-transparent"
+          >
+            <MaterialIcon filled size="sm">
+              search
+            </MaterialIcon>
+          </Button>
+        </form>
+      </Form>
       {/* <nav className="flex items-center space-x-6 text-sm font-medium">
         <Link
           href="/docs"

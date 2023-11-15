@@ -46,9 +46,17 @@ export interface Playlist {
   title: string;
   description?: string;
   thumbnails: Image[];
-  published?: string;
   video_count: string;
   first_videos: VideoInPlaylist[];
+}
+
+export interface VideoPlaylist {
+  id: string;
+  index: string;
+  title: string;
+  thumbnails: Image[];
+  info: string;
+  duration: { text: string; seconds: number };
 }
 
 export interface VideoList {
@@ -56,5 +64,5 @@ export interface VideoList {
   next_page: number;
   item_page: number;
   total: number;
-  items: Video[];
+  items: Video[] | Playlist[] | any;
 }

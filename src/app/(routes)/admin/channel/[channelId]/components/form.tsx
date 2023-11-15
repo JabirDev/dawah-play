@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Form,
   FormControl,
@@ -103,8 +103,8 @@ const ChannelForm = () => {
   };
 
   const onSubmit = async (data: ChannelFormValues) => {
-    console.log("woooy");
-    console.log("data: ", data);
+    // console.log("woooy");
+    // console.log("data: ", data);
     try {
       setLoading(true);
       const response = await fetch("/api/yt", {
