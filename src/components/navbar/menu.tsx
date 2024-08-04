@@ -3,16 +3,18 @@ import { getMe } from "@/actions/user/me";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import AccountMenu from "./account";
-import MenuItem from "./menu-item";
-import { User } from "@prisma/client";
-import SearchDialog from "./search-dialog";
+import { userTable } from "../../../drizzle/schema";
 
 interface NavbarMenuProps {
   hideMenu?: boolean;
   hideSearch?: boolean;
 }
 
-const NavbarButton = async ({ me }: { me?: User | null }) => {
+const NavbarButton = async ({
+  me,
+}: {
+  me?: typeof userTable.$inferSelect | null;
+}) => {
   if (!me) {
     return (
       <Link

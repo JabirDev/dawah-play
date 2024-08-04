@@ -23,5 +23,5 @@ export async function getMe() {
 
   const { createdAt, email, ...me } = user[0];
 
-  return me;
+  return user[0];
 }

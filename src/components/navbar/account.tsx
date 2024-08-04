@@ -18,10 +18,10 @@ import {
   LogOut,
 } from "lucide-react";
 import { signOut } from "@/app/(auth)/actions";
-import { User } from "@prisma/client";
+import { userTable } from "../../../drizzle/schema";
 
 interface AccountMenuProps {
-  me: User;
+  me: typeof userTable.$inferSelect;
 }
 
 const AccountMenu = ({ me }: AccountMenuProps) => {
