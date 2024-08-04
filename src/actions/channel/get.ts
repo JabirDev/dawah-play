@@ -28,7 +28,6 @@ export async function getChannel(id: string): Promise<Response> {
       .where(eq(channelTable.url, url));
 
     if (!channel.length) {
-      console.log("channel:", channel);
       return {
         code: "NOT_FOUND",
         error: "Channel not found",

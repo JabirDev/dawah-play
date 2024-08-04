@@ -96,7 +96,7 @@ const PodcastPlayer = () => {
   return (
     <div
       className={cn(
-        "sticky bottom-0 left-0 flex size-full flex-col bg-background",
+        "sticky bottom-0 left-0 flex size-full flex-col backdrop-blur supports-[backdrop-filter]:bg-background/80",
         {
           hidden: !audio?.audioUrl,
         },

@@ -11,8 +11,6 @@ export const onetapAction = async (token: string) => {
   try {
     const googleUser: GoogleUser = parseJwt(token);
 
-    console.log("onetap user:", googleUser);
-
     const existingUser = await db
       .select()
       .from(userTable)
@@ -28,7 +26,7 @@ export const onetapAction = async (token: string) => {
         ),
       );
 
-    if (existingUser.length) {
+    if (existingUser.length > 0) {
       if (!account.length) {
         await db.insert(accountTable).values({
           id: generateIdFromEntropySize(10),
@@ -47,20 +45,19 @@ export const onetapAction = async (token: string) => {
     }
 
     const userId = generateIdFromEntropySize(10);
-    await db.transaction(async (tx) => {
-      await db.insert(userTable).values({
-        id: userId,
-        name: googleUser.name,
-        email: googleUser.email,
-        image: googleUser.picture,
-        username: getUsernameFromEmail(googleUser.email),
-      });
-      await tx.insert(accountTable).values({
-        id: generateIdFromEntropySize(10),
-        provider: "google",
-        providerId: googleUser.sub,
-        userId,
-      });
+
+    await db.insert(userTable).values({
+      id: userId,
+      name: googleUser.name,
+      email: googleUser.email,
+      image: googleUser.picture,
+      username: getUsernameFromEmail(googleUser.email),
+    });
+    await db.insert(accountTable).values({
+      id: generateIdFromEntropySize(10),
+      provider: "google",
+      providerId: googleUser.sub,
+      userId,
     });
 
     const session = await lucia.createSession(userId, {});

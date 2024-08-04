@@ -14,11 +14,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
   const codeVerifier = cookies().get("google_code_verifier")?.value ?? null;
 
-  console.log("code:", code);
-  console.log("state:", state);
-  console.log("verifier:", codeVerifier);
-  console.log("stateStored:", storedState);
-
   if (
     !code ||
     !state ||
@@ -34,8 +29,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
     const response = await fetch(
-      // "https://openidconnect.googleapis.com/v1/userinfo",
-      "https://www.googleapis.com/oauth2/userinfo",
+      "https://openidconnect.googleapis.com/v1/userinfo",
+      // "https://www.googleapis.com/oauth2/userinfo",
       {
         headers: {
           Authorization: `Bearer ${tokens.accessToken}`,
@@ -59,7 +54,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         ),
       );
 
-    if (existingUser) {
+    if (existingUser.length) {
       if (!account) {
         await db.insert(accountTable).values({
           id: generateIdFromEntropySize(10),
@@ -84,21 +79,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const userId = generateIdFromEntropySize(10);
-    await db.transaction(async (tx) => {
-      await db.insert(userTable).values({
+    const newUser = await db
+      .insert(userTable)
+      .values({
         id: userId,
         name: googleUser.name,
         email: googleUser.email,
         image: googleUser.picture,
         username: getUsernameFromEmail(googleUser.email),
-      });
-      await tx.insert(accountTable).values({
+      })
+      .returning();
+    const newAccount = await db
+      .insert(accountTable)
+      .values({
         id: generateIdFromEntropySize(10),
         provider: "google",
         providerId: googleUser.sub,
         userId,
-      });
-    });
+      })
+      .returning();
 
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);

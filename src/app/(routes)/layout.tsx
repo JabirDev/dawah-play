@@ -1,14 +1,11 @@
 import OneTapComponent from "@/components/onetap";
 import SidebarWrapper from "@/components/sidebar";
-import { validateRequest } from "@/lib/lucia/auth";
 
-export default async function Layout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await validateRequest();
-
   return (
     <>
       <SidebarWrapper>{children}</SidebarWrapper>

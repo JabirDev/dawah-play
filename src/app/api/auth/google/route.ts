@@ -12,11 +12,6 @@ export async function GET(): Promise<NextResponse> {
       scopes: ["profile", "email"],
     });
 
-    console.log("url:", url);
-
-    console.log("saveState:", state);
-    console.log("saveVerifier:", codeVerifier);
-
     cookies().set("google_oauth_state", state, {
       path: "/",
       httpOnly: true,

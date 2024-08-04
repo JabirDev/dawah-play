@@ -16,7 +16,6 @@ export async function signUp(
 ): Promise<{ error: string }> {
   try {
     const { username, email, password } = signUpSchema.parse(credentials);
-    console.log("credentials:", credentials);
     const passwordHash = await hash(password, {
       memoryCost: 19456,
       timeCost: 2,
@@ -32,7 +31,6 @@ export async function signUp(
       .where(eq(userTable.username, username));
 
     if (existingUsername.length) {
-      console.log("user:", existingUsername[0].username);
       return {
         error: "Username already taken",
       };
@@ -44,7 +42,6 @@ export async function signUp(
       .where(eq(userTable.email, email));
 
     if (existingEmail.length) {
-      console.log("user:", existingEmail[0].email);
       return {
         error: "Email already taken",
       };
