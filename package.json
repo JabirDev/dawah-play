@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "drizzle-kit push",
-    "db:introspect": "drizzle-kit introspect",
     "db:studio": "drizzle-kit studio --port 5555 --verbose"
   },
   "dependencies": {
