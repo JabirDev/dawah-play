@@ -1,7 +1,9 @@
 "use server";
 
 import { validateRequest } from "@/lib/lucia/auth";
-import prismadb from "@/lib/prisma";
+import { db } from "../../../drizzle";
+import { userTable } from "../../../drizzle/schema";
+import { and, eq } from "drizzle-orm";
 
 export async function getMe() {
   const session = await validateRequest();
@@ -9,12 +11,17 @@ export async function getMe() {
     return null;
   }
 
-  const user = await prismadb.user.findUnique({
-    where: {
-      id: session.user.id,
-      username: session.user.username,
-    },
-  });
+  const user = await db
+    .select()
+    .from(userTable)
+    .where(
+      and(
+        eq(userTable.id, session.user.id),
+        eq(userTable.username, session.user.username),
+      ),
+    );
 
-  return user;
+  const { createdAt, email, ...me } = user[0];
+
+  return me;
 }

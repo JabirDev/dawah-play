@@ -1,41 +1,43 @@
 "use server";
 
 import { lucia } from "@/lib/lucia/auth";
-import prismadb from "@/lib/prisma";
 import { generateIdFromEntropySize } from "lucia";
 import { cookies } from "next/headers";
+import { db } from "../../../drizzle";
+import { accountTable, userTable } from "../../../drizzle/schema";
+import { and, eq } from "drizzle-orm";
 
 export const onetapAction = async (token: string) => {
   try {
     const googleUser: GoogleUser = parseJwt(token);
 
-    // console.log("onetap user:", googleUser);
+    console.log("onetap user:", googleUser);
 
-    const existingUser = await prismadb.user.findFirst({
-      where: {
-        email: googleUser.email,
-      },
-    });
+    const existingUser = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, googleUser.email));
 
-    const account = await prismadb.account.findFirst({
-      where: {
-        provider: "google",
-        providerId: googleUser.sub,
-      },
-    });
+    const account = await db
+      .select()
+      .from(accountTable)
+      .where(
+        and(
+          eq(accountTable.provider, "google"),
+          eq(accountTable.providerId, googleUser.sub),
+        ),
+      );
 
-    if (existingUser) {
-      if (!account) {
-        await prismadb.account.create({
-          data: {
-            id: generateIdFromEntropySize(10),
-            provider: "google",
-            providerId: googleUser.sub,
-            userId: existingUser.id,
-          },
+    if (existingUser.length) {
+      if (!account.length) {
+        await db.insert(accountTable).values({
+          id: generateIdFromEntropySize(10),
+          provider: "google",
+          providerId: googleUser.sub,
+          userId: existingUser[0].id,
         });
       }
-      const session = await lucia.createSession(existingUser.id, {});
+      const session = await lucia.createSession(existingUser[0].id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       cookies().set(
         sessionCookie.name,
@@ -45,24 +47,20 @@ export const onetapAction = async (token: string) => {
     }
 
     const userId = generateIdFromEntropySize(10);
-    await prismadb.user.create({
-      data: {
+    await db.transaction(async (tx) => {
+      await db.insert(userTable).values({
         id: userId,
         name: googleUser.name,
         email: googleUser.email,
         image: googleUser.picture,
         username: getUsernameFromEmail(googleUser.email),
-        accounts: {
-          create: {
-            id: generateIdFromEntropySize(10),
-            provider: "google",
-            providerId: googleUser.sub,
-          },
-        },
-      },
-      include: {
-        accounts: true,
-      },
+      });
+      await tx.insert(accountTable).values({
+        id: generateIdFromEntropySize(10),
+        provider: "google",
+        providerId: googleUser.sub,
+        userId,
+      });
     });
 
     const session = await lucia.createSession(userId, {});

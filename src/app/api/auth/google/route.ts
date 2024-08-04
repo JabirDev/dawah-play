@@ -8,22 +8,29 @@ export async function GET(): Promise<NextResponse> {
     const state = generateState();
     const codeVerifier = generateCodeVerifier();
 
+    const url = await google.createAuthorizationURL(state, codeVerifier, {
+      scopes: ["profile", "email"],
+    });
+
+    console.log("url:", url);
+
+    console.log("saveState:", state);
+    console.log("saveVerifier:", codeVerifier);
+
     cookies().set("google_oauth_state", state, {
+      path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
       maxAge: 60 * 10,
+      sameSite: "lax",
     });
 
     cookies().set("google_code_verifier", codeVerifier, {
+      path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
       maxAge: 60 * 10,
-    });
-
-    const url = await google.createAuthorizationURL(state, codeVerifier, {
-      scopes: ["profile", "email"],
+      sameSite: "lax",
     });
 
     return NextResponse.redirect(url);

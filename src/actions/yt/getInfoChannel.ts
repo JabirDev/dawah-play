@@ -1,9 +1,12 @@
 "use server";
 
 import { validateRequest } from "@/lib/lucia/auth";
-import prismadb from "@/lib/prisma";
 import { load } from "cheerio";
 import { ResponseCode } from "./types";
+import { getMe } from "../user/me";
+import { db } from "../../../drizzle";
+import { channelTable } from "../../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 interface Response {
   id?: string | null | undefined;
@@ -16,21 +19,20 @@ interface Response {
 
 export async function getInfoChannel(url: string): Promise<Response> {
   try {
-    const { user } = await validateRequest();
-    if (!user) {
+    const me = await getMe();
+    if (!me) {
       return {
         code: "NO_AUTH",
         error: "You have to login",
       };
     }
 
-    const existingChannel = await prismadb.channel.findUnique({
-      where: {
-        url,
-      },
-    });
+    const existingChannel = await db
+      .select()
+      .from(channelTable)
+      .where(eq(channelTable.url, url));
 
-    if (existingChannel) {
+    if (existingChannel.length) {
       return {
         code: "ALREADY_EXIST",
         error: "This channel is already exist",

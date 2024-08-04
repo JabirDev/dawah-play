@@ -1,11 +1,12 @@
 import { Google } from "arctic";
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
+import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { Lucia, Session, User } from "lucia";
-import prismadb from "../prisma";
 import { cache } from "react";
 import { cookies } from "next/headers";
+import { sessionTable, userTable } from "../../../drizzle/schema";
+import { db } from "../../../drizzle";
 
-const adapter = new PrismaAdapter(prismadb.session, prismadb.user); // your adapter
+const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable); // your adapter
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -65,7 +66,7 @@ export const validateRequest = cache(
         cookies().set(
           sessionCookie.name,
           sessionCookie.value,
-          sessionCookie.attributes
+          sessionCookie.attributes,
         );
       }
 
@@ -74,17 +75,17 @@ export const validateRequest = cache(
         cookies().set(
           sessionCookie.name,
           sessionCookie.value,
-          sessionCookie.attributes
+          sessionCookie.attributes,
         );
       }
     } catch {}
 
     return result;
-  }
+  },
 );
 
 export const google = new Google(
   process.env.AUTH_GOOGLE_ID!,
   process.env.AUTH_GOOGLE_SECRET!,
-  `${process.env.HOST_NAME}/api/auth/callback/google`
+  `${process.env.HOST_NAME}/api/auth/callback/google`,
 );

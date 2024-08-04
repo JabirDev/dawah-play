@@ -1,13 +1,10 @@
 "use server";
 
-import prismadb from "@/lib/prisma";
+import { db } from "../../../drizzle";
+import { channelTable } from "../../../drizzle/schema";
 
 export async function getAllChannel() {
-  const channels = await prismadb.channel.findMany({
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
+  const channels = await db.select().from(channelTable);
+  console.log(channels);
   return channels;
 }

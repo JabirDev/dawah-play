@@ -1,6 +1,8 @@
 "use server";
 
-import prismadb from "@/lib/prisma";
+import { eq, ilike, like } from "drizzle-orm";
+import { db } from "../../../drizzle";
+import { channelTable } from "../../../drizzle/schema";
 import { getChannelInfo } from "../yt/channel";
 import { ResponseCode } from "../yt/types";
 
@@ -19,20 +21,21 @@ interface Response {
 
 export async function getChannel(id: string): Promise<Response> {
   try {
-    const channel = await prismadb.channel.findFirst({
-      where: {
-        url: { contains: id.replace("%40", "@") },
-      },
-    });
+    const url = "https://www.youtube.com/" + id.replace("%40", "@");
+    const channel = await db
+      .select()
+      .from(channelTable)
+      .where(eq(channelTable.url, url));
 
-    if (!channel) {
+    if (!channel.length) {
+      console.log("channel:", channel);
       return {
         code: "NOT_FOUND",
         error: "Channel not found",
       };
     }
 
-    const info = await getChannelInfo(channel.ytId);
+    const info = await getChannelInfo(channel[0].ytId);
     if (!info) {
       return {
         code: "NOT_FOUND",
@@ -40,7 +43,7 @@ export async function getChannel(id: string): Promise<Response> {
       };
     }
 
-    const { createdAt, updatedAt, ...dataChannel } = channel;
+    const { createdAt, updatedAt, ...dataChannel } = channel[0];
 
     return { code: "SUCCESS", ...dataChannel, ...info };
   } catch (error) {

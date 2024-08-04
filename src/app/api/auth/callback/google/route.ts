@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
 import { OAuth2RequestError } from "arctic";
 import { google, lucia } from "@/lib/lucia/auth";
-import prismadb from "@/lib/prisma";
 import { generateIdFromEntropySize } from "lucia";
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "../../../../../../drizzle";
+import { accountTable, userTable } from "../../../../../../drizzle/schema";
+import { and, eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const url = request.nextUrl;
@@ -11,6 +13,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const state = url.searchParams.get("state");
   const storedState = cookies().get("google_oauth_state")?.value ?? null;
   const codeVerifier = cookies().get("google_code_verifier")?.value ?? null;
+
+  console.log("code:", code);
+  console.log("state:", state);
+  console.log("verifier:", codeVerifier);
+  console.log("stateStored:", storedState);
 
   if (
     !code ||
@@ -27,45 +34,46 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
     const response = await fetch(
-      "https://openidconnect.googleapis.com/v1/userinfo",
+      // "https://openidconnect.googleapis.com/v1/userinfo",
+      "https://www.googleapis.com/oauth2/userinfo",
       {
         headers: {
           Authorization: `Bearer ${tokens.accessToken}`,
         },
-      }
+      },
     );
     const googleUser: GoogleUser = await response.json();
 
-    const existingUser = await prismadb.user.findFirst({
-      where: {
-        email: googleUser.email,
-      },
-    });
+    const existingUser = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, googleUser.email));
 
-    const account = await prismadb.account.findFirst({
-      where: {
-        provider: "google",
-        providerId: googleUser.sub,
-      },
-    });
+    const account = await db
+      .select()
+      .from(accountTable)
+      .where(
+        and(
+          eq(accountTable.provider, "google"),
+          eq(accountTable.providerId, googleUser.sub),
+        ),
+      );
 
     if (existingUser) {
       if (!account) {
-        await prismadb.account.create({
-          data: {
-            id: generateIdFromEntropySize(10),
-            provider: "google",
-            providerId: googleUser.sub,
-            userId: existingUser.id,
-          },
+        await db.insert(accountTable).values({
+          id: generateIdFromEntropySize(10),
+          provider: "google",
+          providerId: googleUser.sub,
+          userId: existingUser[0].id,
         });
       }
-      const session = await lucia.createSession(existingUser.id, {});
+      const session = await lucia.createSession(existingUser[0].id, {});
       const sessionCookie = lucia.createSessionCookie(session.id);
       cookies().set(
         sessionCookie.name,
         sessionCookie.value,
-        sessionCookie.attributes
+        sessionCookie.attributes,
       );
       return new NextResponse(null, {
         status: 302,
@@ -76,24 +84,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const userId = generateIdFromEntropySize(10);
-    await prismadb.user.create({
-      data: {
+    await db.transaction(async (tx) => {
+      await db.insert(userTable).values({
         id: userId,
         name: googleUser.name,
         email: googleUser.email,
         image: googleUser.picture,
         username: getUsernameFromEmail(googleUser.email),
-        accounts: {
-          create: {
-            id: generateIdFromEntropySize(10),
-            provider: "google",
-            providerId: googleUser.sub,
-          },
-        },
-      },
-      include: {
-        accounts: true,
-      },
+      });
+      await tx.insert(accountTable).values({
+        id: generateIdFromEntropySize(10),
+        provider: "google",
+        providerId: googleUser.sub,
+        userId,
+      });
     });
 
     const session = await lucia.createSession(userId, {});
@@ -101,7 +105,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     cookies().set(
       sessionCookie.name,
       sessionCookie.value,
-      sessionCookie.attributes
+      sessionCookie.attributes,
     );
     return new NextResponse(null, {
       status: 302,

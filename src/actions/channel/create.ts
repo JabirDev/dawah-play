@@ -1,29 +1,28 @@
 "use server";
 
-import prismadb from "@/lib/prisma";
 import { channelSchema, ChannelValues } from "@/types/channel";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
+import { db } from "../../../drizzle";
+import { channelTable } from "../../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export async function createChannel(data: ChannelValues) {
   try {
     const { url } = channelSchema.parse(data);
 
-    const existingChannel = await prismadb.channel.findUnique({
-      where: {
-        url,
-      },
-    });
+    const existingChannel = await db
+      .select()
+      .from(channelTable)
+      .where(eq(channelTable.url, url));
 
-    if (existingChannel) {
+    if (existingChannel.length) {
       return {
         error: "Channel already exist",
       };
     }
 
-    await prismadb.channel.create({
-      data,
-    });
+    await db.insert(channelTable).values(data);
 
     return redirect("/");
   } catch (error) {
