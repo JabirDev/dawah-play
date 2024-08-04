@@ -1,7 +1,6 @@
 import OneTapComponent from "@/components/onetap";
+import SidebarWrapper from "@/components/sidebar";
 import { validateRequest } from "@/lib/lucia/auth";
-import Providers from "@/providers";
-import SessionProvider from "@/providers/auth";
 
 export default async function Layout({
   children,
@@ -10,11 +9,10 @@ export default async function Layout({
 }>) {
   const session = await validateRequest();
 
-  // if (!session.user && !session.session) redirect("/signin");
   return (
-    <SessionProvider value={session}>
-      <Providers>{children}</Providers>
+    <>
+      <SidebarWrapper>{children}</SidebarWrapper>
       <OneTapComponent googleClientId={process.env.AUTH_GOOGLE_ID!} />
-    </SessionProvider>
+    </>
   );
 }

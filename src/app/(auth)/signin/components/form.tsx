@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "../actions";
+import ButtonSubmit from "@/components/button/submit";
 
 const SignInForm = () => {
   const [error, setError] = useState<string>();
@@ -29,7 +30,6 @@ const SignInForm = () => {
   });
 
   const onSubmit = async (values: SignInValues) => {
-    console.log("data:", values);
     setError(undefined);
     startTransition(async () => {
       const { error } = await signIn(values);
@@ -39,7 +39,7 @@ const SignInForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 mt-10">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-3">
         {error && <p className="text-center text-destructive">{error}</p>}
         <FormField
           control={form.control}
@@ -68,9 +68,7 @@ const SignInForm = () => {
           )}
         />
 
-        <Button type="submit" className="rounded-lg w-full mt-10" size="sm">
-          {isPending ? "Processing..." : "Sign In"}
-        </Button>
+        <ButtonSubmit isPending={isPending}>Sign In</ButtonSubmit>
       </form>
     </Form>
   );

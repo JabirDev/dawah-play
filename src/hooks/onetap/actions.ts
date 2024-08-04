@@ -9,7 +9,7 @@ export const onetapAction = async (token: string) => {
   try {
     const googleUser: GoogleUser = parseJwt(token);
 
-    console.log("onetap user:", googleUser);
+    // console.log("onetap user:", googleUser);
 
     const existingUser = await prismadb.user.findFirst({
       where: {
@@ -40,7 +40,7 @@ export const onetapAction = async (token: string) => {
       cookies().set(
         sessionCookie.name,
         sessionCookie.value,
-        sessionCookie.attributes
+        sessionCookie.attributes,
       );
     }
 
@@ -70,10 +70,10 @@ export const onetapAction = async (token: string) => {
     cookies().set(
       sessionCookie.name,
       sessionCookie.value,
-      sessionCookie.attributes
+      sessionCookie.attributes,
     );
   } catch (error) {
-    console.log("onetap:", error);
+    console.error("onetap:", error);
   }
 };
 
@@ -86,7 +86,7 @@ function parseJwt(token: string) {
       .map(function (c) {
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       })
-      .join("")
+      .join(""),
   );
 
   return JSON.parse(jsonPayload);

@@ -8,9 +8,6 @@ export async function middleware(req: NextRequest) {
   const isAuthRoute = authRoutes.includes(req.nextUrl.pathname);
   const isPublicRoute = publicRoutes.includes(req.nextUrl.pathname);
 
-  console.log("session:", session);
-  console.log("route:", req.nextUrl.pathname);
-
   if (isApiAuth) {
     return;
   }

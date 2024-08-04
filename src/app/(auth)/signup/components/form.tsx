@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { signUp } from "../actions";
+import ButtonSubmit from "@/components/button/submit";
 
 const SignUpForm = () => {
   const [error, setError] = useState<string>();
@@ -30,7 +30,6 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (values: SignUpValues) => {
-    console.log("data:", values);
     setError(undefined);
     startTransition(async () => {
       const { error } = await signUp(values);
@@ -40,7 +39,7 @@ const SignUpForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 mt-10">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-10 space-y-3">
         {error && <p className="text-center text-destructive">{error}</p>}
         <FormField
           control={form.control}
@@ -82,9 +81,7 @@ const SignUpForm = () => {
           )}
         />
 
-        <Button type="submit" className="rounded-lg w-full mt-10" size="sm">
-          {isPending ? "Processing..." : "Sign Up"}
-        </Button>
+        <ButtonSubmit isPending={isPending}>Sign Up</ButtonSubmit>
       </form>
     </Form>
   );
