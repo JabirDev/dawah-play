@@ -24,7 +24,7 @@ export const oneTimeTokenType = pgEnum("one_time_token_type", [
   "email_change_token_current",
   "phone_change_token",
 ]);
-export const role = pgEnum("Role", ["admin", "member"]);
+export const role = pgEnum("role", ["admin", "member"]);
 export const keyStatus = pgEnum("key_status", [
   "default",
   "valid",
@@ -144,3 +144,28 @@ export const channelTable = pgTable(
     };
   },
 );
+
+export const bookmarkTable = pgTable("bookmarks", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => userTable.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  channelId: text("channelId")
+    .notNull()
+    .references(() => channelTable.ytId, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  videoId: text("videoId").notNull(),
+  author: text("author").notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  title: text("title").notNull(),
+  createdAt: timestamp("createdAt", { precision: 3, mode: "string" })
+    .defaultNow()
+    .notNull(),
+});

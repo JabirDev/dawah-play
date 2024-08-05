@@ -3,7 +3,9 @@ export interface AudioProps {
   audioUrl: string;
   author: string;
   imageUrl: string;
-  podcastId: string;
+  videoId: string;
+  channelId: string;
+  isBookmarked: boolean;
 }
 
 export interface AudioContextType {

@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useAudio } from "@/providers/audio";
 import { formatTime } from "@/lib/formatTime";
 import { Progress } from "../ui/progress";
@@ -8,14 +8,25 @@ import Image from "next/image";
 import Link from "next/link";
 import Large from "../typography/large";
 import Small from "../typography/small";
+import { Button } from "../ui/button";
+import { Bookmark, Share } from "lucide-react";
+import { addBookmark } from "@/actions/bookmark/add";
+import { useSession } from "@/providers/auth";
+import { removeBookmark } from "@/actions/bookmark/remove";
 
 const PodcastPlayer = () => {
+  const [error, setError] = useState<string>();
+  const [isPending, startTransition] = useTransition();
+  const { user } = useSession();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const { audio } = useAudio();
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(
+    audio?.isBookmarked ? true : false,
+  );
 
   const togglePlayPause = () => {
     if (audioRef.current?.paused) {
@@ -83,10 +94,36 @@ const PodcastPlayer = () => {
       setIsPlaying(true);
     }
   }, [audio]);
+
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
     }
+  };
+
+  const handleAddRemoveBookmark = () => {
+    if (!user || !audio) {
+      setError("Failed to add bookmark");
+      return;
+    }
+    setError(undefined);
+    startTransition(async () => {
+      if (isBookmarked) {
+        const { error } = await removeBookmark(audio.videoId);
+        if (error) setError(error);
+        setIsBookmarked(false);
+      } else {
+        const { error } = await addBookmark({
+          author: audio.author,
+          channelId: audio.channelId,
+          imageUrl: audio.imageUrl,
+          title: audio.title,
+          videoId: audio.videoId,
+        });
+        if (error) setError(error);
+        setIsBookmarked(true);
+      }
+    });
   };
 
   useEffect(() => {
@@ -136,7 +173,7 @@ const PodcastPlayer = () => {
           onEnded={handleAudioEnded}
         />
         <div className="flex items-center gap-4 max-md:hidden">
-          <Link href={`/podcast/${audio?.podcastId}`}>
+          <Link href={`/detail/${audio?.videoId}`}>
             <Image
               src={audio?.imageUrl! || "/images/player1.png"}
               width={64}
@@ -151,6 +188,27 @@ const PodcastPlayer = () => {
               {audio?.author}
             </Small>
           </div>
+          <Button
+            disabled={isPending}
+            onClick={handleAddRemoveBookmark}
+            variant={"outline"}
+            size={"icon"}
+            className="border-none bg-transparent"
+          >
+            <Bookmark
+              className={cn(
+                "h-5 w-5",
+                isBookmarked && "fill-tertiary text-tertiary",
+              )}
+            />
+          </Button>
+          <Button
+            variant={"outline"}
+            size={"icon"}
+            className="border-none bg-transparent"
+          >
+            <Share className="h-5 w-5" />
+          </Button>
         </div>
         <div className="flex w-auto cursor-pointer gap-3 md:gap-6">
           <div className="flex items-center gap-1.5">

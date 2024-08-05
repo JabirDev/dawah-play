@@ -38,7 +38,7 @@ const AudioCard: FC<AudioCardProps> = ({ data, index }) => {
       onClick={handlePlay}
       disabled={isPending}
       className={cn(
-        "flex w-full cursor-pointer items-center rounded-md p-4 transition-all duration-150 ease-in hover:bg-primary/10",
+        "flex w-full cursor-pointer items-center rounded-md p-4 transition-all duration-200 ease-in-out hover:bg-primary/10",
         isPlaying && "bg-primary/10",
       )}
     >
