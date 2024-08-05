@@ -19,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${nunito.className}`}>
+      <body
+        className={`${nunito.className} flex max-w-screen-2xl flex-col items-center`}
+      >
         <Providers>
           {children}
           <PodcastPlayer />

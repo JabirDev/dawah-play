@@ -1,6 +1,5 @@
 "use client";
 import { FC, useTransition } from "react";
-import { VideoCompact } from "youtubei";
 import Large from "../typography/large";
 import Small from "../typography/small";
 import { formatNumberToTime } from "@/actions/yt/time";
@@ -8,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAudio } from "@/providers/audio";
 import { getAudio } from "@/actions/yt/getAudio";
 import AudioLoader from "../player/loader";
+import { Loader2 } from "lucide-react";
 
 interface AudioCardProps {
   data: {
@@ -38,8 +38,8 @@ const AudioCard: FC<AudioCardProps> = ({ data, index }) => {
       onClick={handlePlay}
       disabled={isPending}
       className={cn(
-        "flex w-full cursor-pointer items-center rounded-md p-4 hover:bg-accent",
-        isPlaying && "bg-accent",
+        "flex w-full cursor-pointer items-center rounded-md p-4 transition-all duration-150 ease-in hover:bg-primary/10",
+        isPlaying && "bg-primary/10",
       )}
     >
       <Large
@@ -50,6 +50,7 @@ const AudioCard: FC<AudioCardProps> = ({ data, index }) => {
       >
         {index + 1}. {data.title}
       </Large>
+      {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
       {currentPlay && isPlaying && <AudioLoader />}
       <Small className="ml-auto text-muted-foreground">
         {formatNumberToTime(data.duration!)}

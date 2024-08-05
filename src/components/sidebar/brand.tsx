@@ -13,7 +13,7 @@ const SidebarBrand = ({ isSmall }: { isSmall: boolean }) => {
       <BrandIcons.logo className="h-5 w-5 lg:h-6 lg:w-6" />
       <Large
         className={cn(
-          "hidden font-black opacity-95 lg:inline-block",
+          "hidden font-bold opacity-95 lg:inline-block",
           isSmall && "lg:hidden",
         )}
       >

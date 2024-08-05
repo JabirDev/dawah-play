@@ -30,10 +30,10 @@ const AccountMenu = ({ me }: AccountMenuProps) => {
       {/* <p>Hi, {getFirstName(me.name!)}</p> */}
       <Popover>
         <PopoverTrigger>
-          <Avatar className="h-6 w-6">
+          <Avatar className="h-8 w-8">
             <AvatarFallback>{getInitials(me.name!)}</AvatarFallback>
             <AvatarImage
-              src={me.image ?? "/default.png"}
+              src={me.image ?? "/dawahplay.svg"}
               alt={me.name ?? "Profile"}
             />
           </Avatar>

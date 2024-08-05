@@ -10,8 +10,10 @@ const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const [audio, setAudio] = useState<AudioProps | undefined>();
   const pathname = usePathname();
 
+  const excludePath = ["/add-channel", "/signin", "/signup"];
+
   useEffect(() => {
-    if (pathname === "/add-channel") setAudio(undefined);
+    if (excludePath.includes(pathname)) setAudio(undefined);
   }, [pathname]);
 
   return (

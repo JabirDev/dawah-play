@@ -89,6 +89,26 @@ const PodcastPlayer = () => {
     }
   };
 
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === " ") {
+        togglePlayPause();
+        e.preventDefault();
+      }
+      if (e.key === "ArrowLeft") {
+        rewind();
+        e.preventDefault();
+      }
+      if (e.key === "ArrowRight") {
+        forward();
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
   const handleAudioEnded = () => {
     setIsPlaying(false);
   };
@@ -96,7 +116,7 @@ const PodcastPlayer = () => {
   return (
     <div
       className={cn(
-        "sticky bottom-0 left-0 flex size-full flex-col backdrop-blur supports-[backdrop-filter]:bg-background/80",
+        "sticky bottom-0 left-0 z-50 flex size-full flex-col backdrop-blur supports-[backdrop-filter]:bg-background/80",
         {
           hidden: !audio?.audioUrl,
         },

@@ -49,9 +49,10 @@ export default async function Page({ params: { id } }: Props) {
           className="aspect-square rounded-md"
         />
         <div className="flex w-full flex-col gap-2 md:w-1/2">
-          <H1>
-            {info.name} {info.verified && <BadgeCheck strokeWidth={3} />}
-          </H1>
+          {/* <div className="flex w-full items-center">
+            {info.verified && <BrandIcons.verified className="fill-primary" />}
+          </div> */}
+          <H1>{info.name}</H1>
           <Small className="text-muted-foreground">
             {info.subscribers} {info.videoCounts}
           </Small>
@@ -62,7 +63,11 @@ export default async function Page({ params: { id } }: Props) {
             </Link>
           </div>
         </div>
-        {isAdmin && <Button className="ml-auto">Delete</Button>}
+        {isAdmin && (
+          <Button className="ml-auto" variant={"destructive"}>
+            Delete
+          </Button>
+        )}
       </div>
       <div className="my-6 flex flex-col">
         <H2>Playlist</H2>
