@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: ["/", "/channel", "/discover"],
       disallow: ["/bookmark", "/dashboard"],
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    // sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
