@@ -208,7 +208,6 @@ const PodcastPlayer = () => {
     navigator.clipboard.writeText(
       `${origin}${pathname}?play=${audio?.videoId}`,
     );
-    alert(`${origin}${pathname}?play=${audio?.videoId}`);
   };
 
   return (
