@@ -145,6 +145,7 @@ const PodcastPlayer = () => {
           imageUrl: audio.imageUrl,
           title: audio.title,
           videoId: audio.videoId,
+          duration: duration.toString(),
         });
         if (error) setError(error);
       }

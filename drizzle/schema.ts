@@ -4,10 +4,9 @@ import {
   pgEnum,
   text,
   timestamp,
-  foreignKey,
+  numeric,
   boolean,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 export const aalLevel = pgEnum("aal_level", ["aal1", "aal2", "aal3"]);
 export const codeChallengeMethod = pgEnum("code_challenge_method", [
@@ -165,6 +164,7 @@ export const bookmarkTable = pgTable("bookmarks", {
   author: text("author").notNull(),
   imageUrl: text("imageUrl").notNull(),
   title: text("title").notNull(),
+  duration: numeric("duration").notNull(),
   createdAt: timestamp("createdAt", { precision: 3, mode: "string" })
     .defaultNow()
     .notNull(),

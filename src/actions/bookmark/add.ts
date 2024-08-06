@@ -16,6 +16,7 @@ interface DataProps {
   videoId: string;
   author: string;
   imageUrl: string;
+  duration: string;
   title: string;
 }
 
