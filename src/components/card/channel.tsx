@@ -18,13 +18,12 @@ const CardChannel: FC<Props> = ({ data: { url, name, image } }) => {
       href={channelUrl}
       className="group flex h-fit w-1/2 flex-col rounded-lg p-2 transition-all duration-100 hover:bg-accent md:w-40 md:p-4"
       aria-label={name}
-      title={name}
     >
       <div className="relative overflow-hidden rounded-full">
         <AspectRatio ratio={1 / 1}>
           <Image
             src={image}
-            alt={name}
+            alt={"avatar"}
             className="aspect-square object-cover transition-all duration-100 group-hover:scale-105"
             fill
           />
