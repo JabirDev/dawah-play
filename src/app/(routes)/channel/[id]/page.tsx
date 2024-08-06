@@ -11,11 +11,10 @@ import { BrandIcons } from "@/components/icons/brand-icons";
 import { getMe } from "@/actions/user/me";
 import { Button } from "@/components/ui/button";
 import H2 from "@/components/typography/h2";
-import { getVideosByChannelId } from "@/actions/yt/videos";
+import { getVideosByChannelId } from "@/actions/yt/getVideosByChannelId";
 import { Each } from "@/components/ui/each";
-import Large from "@/components/typography/large";
-import { formatNumberToTime } from "@/actions/yt/time";
 import AudioCard from "@/components/card/audio";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface Props {
   params: { id: string };
@@ -75,16 +74,7 @@ export default async function Page({ params: { id } }: Props) {
           {videos && videos?.length > 0 ? (
             <Each
               of={videos}
-              render={(vid, index) => (
-                <AudioCard
-                  data={{
-                    id: vid.id,
-                    title: vid.title,
-                    duration: vid.duration,
-                  }}
-                  index={index}
-                />
-              )}
+              render={(vid, index) => <AudioCard data={vid} index={index} />}
             />
           ) : (
             <P>No audio available</P>

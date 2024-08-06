@@ -8,6 +8,7 @@ const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const [audio, setAudio] = useState<AudioProps | undefined>();
+  const [isBookmarked, setIsBookmarked] = useState<boolean | undefined>();
   const pathname = usePathname();
 
   const excludePath = ["/add-channel", "/signin", "/signup"];
@@ -17,7 +18,9 @@ const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   }, [pathname]);
 
   return (
-    <AudioContext.Provider value={{ audio, setAudio }}>
+    <AudioContext.Provider
+      value={{ audio, setAudio, isBookmarked, setIsBookmarked }}
+    >
       {children}
     </AudioContext.Provider>
   );

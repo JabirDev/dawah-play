@@ -4,9 +4,18 @@ import ytdl from "@distube/ytdl-core";
 import { db } from "../../../drizzle";
 import { channelTable } from "../../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { getMe } from "../user/me";
+import { getBookmark } from "../bookmark/get";
 
 export async function getAudio(videoId: string) {
   try {
+    const me = await getMe();
+    if (!me) {
+      return null;
+    }
+
+    const bookmark = await getBookmark(videoId);
+
     const url = "https://www.youtube.com/watch?v=" + videoId;
     const info = await ytdl.getInfo(url);
     const channel = await db
@@ -21,8 +30,9 @@ export async function getAudio(videoId: string) {
       imageUrl:
         info.videoDetails.author.thumbnails?.[0].url ??
         channel[0]?.image ??
-        "/vercel.svg",
-      podcastId: videoId,
+        "/dawahplay.svg",
+      videoId,
+      channelId: info.videoDetails.author.id,
     };
     return audio;
   } catch (error) {

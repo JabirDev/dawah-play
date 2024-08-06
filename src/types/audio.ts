@@ -3,10 +3,13 @@ export interface AudioProps {
   audioUrl: string;
   author: string;
   imageUrl: string;
-  podcastId: string;
+  videoId: string;
+  channelId: string;
 }
 
 export interface AudioContextType {
   audio: AudioProps | undefined;
   setAudio: React.Dispatch<React.SetStateAction<AudioProps | undefined>>;
+  isBookmarked: boolean | undefined;
+  setIsBookmarked: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
