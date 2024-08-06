@@ -33,7 +33,6 @@ export async function getAudio(videoId: string) {
         "/dawahplay.svg",
       videoId,
       channelId: info.videoDetails.author.id,
-      isBookmarked: bookmark.data ? true : false,
     };
     return audio;
   } catch (error) {

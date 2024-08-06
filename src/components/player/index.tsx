@@ -34,12 +34,6 @@ const PodcastPlayer = () => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(
     bookmarked ? true : false,
   );
-  // const [bookmarkedOptimistic, addBookmarkedOptimistic] = useOptimistic(
-  //   isBookmarked,
-  //   (_state, newBookmarked: boolean) => {
-  //     return newBookmarked;
-  //   },
-  // );
 
   const togglePlayPause = () => {
     if (audioRef.current?.paused) {
@@ -116,11 +110,10 @@ const PodcastPlayer = () => {
 
   useEffect(() => {
     if (audio) {
-      const data = async () => {
+      startTransition(async () => {
         const bookmark = await getBookmark(audio?.videoId);
         setIsBookmarked(bookmark.data ? true : false);
-      };
-      data();
+      });
     }
   }, [audio]);
 
@@ -129,7 +122,6 @@ const PodcastPlayer = () => {
       setError("Failed to add bookmark");
       return;
     }
-    // addBookmarkedOptimistic(!isBookmarked);
     setError(undefined);
     startTransition(async () => {
       if (isBookmarked) {
