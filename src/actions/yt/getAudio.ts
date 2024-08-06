@@ -5,6 +5,7 @@ import { db } from "../../../drizzle";
 import { bookmarkTable, channelTable } from "../../../drizzle/schema";
 import { and, eq } from "drizzle-orm";
 import { getMe } from "../user/me";
+import { getBookmark } from "../bookmark/get";
 
 export async function getAudio(videoId: string) {
   try {
@@ -12,15 +13,8 @@ export async function getAudio(videoId: string) {
     if (!me) {
       return null;
     }
-    const bookmark = await db
-      .select()
-      .from(bookmarkTable)
-      .where(
-        and(
-          eq(bookmarkTable.userId, me?.id),
-          eq(bookmarkTable.videoId, videoId),
-        ),
-      );
+
+    const bookmark = await getBookmark(videoId);
 
     const url = "https://www.youtube.com/watch?v=" + videoId;
     const info = await ytdl.getInfo(url);
@@ -39,7 +33,7 @@ export async function getAudio(videoId: string) {
         "/dawahplay.svg",
       videoId,
       channelId: info.videoDetails.author.id,
-      isBookmarked: bookmark.length ? true : false,
+      isBookmarked: bookmark.data ? true : false,
     };
     return audio;
   } catch (error) {

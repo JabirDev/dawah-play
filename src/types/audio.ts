@@ -5,10 +5,11 @@ export interface AudioProps {
   imageUrl: string;
   videoId: string;
   channelId: string;
-  isBookmarked: boolean;
 }
 
 export interface AudioContextType {
   audio: AudioProps | undefined;
   setAudio: React.Dispatch<React.SetStateAction<AudioProps | undefined>>;
+  isBookmarked: boolean | undefined;
+  setIsBookmarked: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }

@@ -75,16 +75,7 @@ export default async function Page({ params: { id } }: Props) {
           {videos && videos?.length > 0 ? (
             <Each
               of={videos}
-              render={(vid, index) => (
-                <AudioCard
-                  data={{
-                    id: vid.id,
-                    title: vid.title,
-                    duration: vid.duration,
-                  }}
-                  index={index}
-                />
-              )}
+              render={(vid, index) => <AudioCard data={vid} index={index} />}
             />
           ) : (
             <P>No audio available</P>

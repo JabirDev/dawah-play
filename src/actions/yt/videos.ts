@@ -1,4 +1,5 @@
 import { Client, VideoCompact } from "youtubei";
+import { getBookmark } from "../bookmark/get";
 
 const youtube = new Client();
 
@@ -50,10 +51,30 @@ export const sortVideos = (a: VideoCompact, b: VideoCompact): number => {
   return 0;
 };
 
+interface Video {
+  id: string;
+  title: string;
+  duration: number | null;
+  isBookmarked: boolean;
+}
+
 export async function getVideosByChannelId(
   channelId: string,
-): Promise<VideoCompact[] | undefined> {
+): Promise<Video[] | undefined> {
   const channel = await youtube.getChannel(channelId);
   const videos = await channel?.videos.next();
-  return videos;
+  const data = videos
+    ? Promise.all(
+        videos?.map(async (vid) => {
+          const bookmarked = await getBookmark(vid.id);
+          return {
+            id: vid.id,
+            title: vid.title,
+            duration: vid.duration,
+            isBookmarked: bookmarked.data ? true : false,
+          };
+        }),
+      )
+    : [];
+  return data;
 }

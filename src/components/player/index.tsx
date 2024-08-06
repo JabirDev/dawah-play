@@ -1,6 +1,12 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState, useTransition } from "react";
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useAudio } from "@/providers/audio";
 import { formatTime } from "@/lib/formatTime";
 import { Progress } from "../ui/progress";
@@ -13,6 +19,7 @@ import { Bookmark, Share } from "lucide-react";
 import { addBookmark } from "@/actions/bookmark/add";
 import { useSession } from "@/providers/auth";
 import { removeBookmark } from "@/actions/bookmark/remove";
+import { getBookmark } from "@/actions/bookmark/get";
 
 const PodcastPlayer = () => {
   const [error, setError] = useState<string>();
@@ -23,10 +30,16 @@ const PodcastPlayer = () => {
   const [duration, setDuration] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const { audio } = useAudio();
+  const { audio, isBookmarked: bookmarked } = useAudio();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(
-    audio?.isBookmarked ? true : false,
+    bookmarked ? true : false,
   );
+  // const [bookmarkedOptimistic, addBookmarkedOptimistic] = useOptimistic(
+  //   isBookmarked,
+  //   (_state, newBookmarked: boolean) => {
+  //     return newBookmarked;
+  //   },
+  // );
 
   const togglePlayPause = () => {
     if (audioRef.current?.paused) {
@@ -101,17 +114,27 @@ const PodcastPlayer = () => {
     }
   };
 
+  useEffect(() => {
+    if (audio) {
+      const data = async () => {
+        const bookmark = await getBookmark(audio?.videoId);
+        setIsBookmarked(bookmark.data ? true : false);
+      };
+      data();
+    }
+  }, [audio]);
+
   const handleAddRemoveBookmark = () => {
     if (!user || !audio) {
       setError("Failed to add bookmark");
       return;
     }
+    // addBookmarkedOptimistic(!isBookmarked);
     setError(undefined);
     startTransition(async () => {
       if (isBookmarked) {
         const { error } = await removeBookmark(audio.videoId);
         if (error) setError(error);
-        setIsBookmarked(false);
       } else {
         const { error } = await addBookmark({
           author: audio.author,
@@ -121,8 +144,9 @@ const PodcastPlayer = () => {
           videoId: audio.videoId,
         });
         if (error) setError(error);
-        setIsBookmarked(true);
       }
+      const bookmark = await getBookmark(audio.videoId);
+      setIsBookmarked(bookmark.data ? true : false);
     });
   };
 

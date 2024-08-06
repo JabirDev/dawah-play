@@ -8,30 +8,32 @@ import { useAudio } from "@/providers/audio";
 import { getAudio } from "@/actions/yt/getAudio";
 import AudioLoader from "../player/loader";
 import { Loader2 } from "lucide-react";
+import { getBookmark } from "@/actions/bookmark/get";
 
 interface AudioCardProps {
   data: {
     id: string;
     title: string;
     duration: number | null;
+    isBookmarked: boolean;
   };
   index: number;
 }
 
 const AudioCard: FC<AudioCardProps> = ({ data, index }) => {
   const [isPending, startTransition] = useTransition();
-  const { setAudio, audio: currentPlay } = useAudio();
+  const { setAudio, audio: currentPlay, setIsBookmarked } = useAudio();
 
   const isPlaying = currentPlay?.title === data.title;
+
   const handlePlay = () => {
-    if (!isPending) {
-      startTransition(async () => {
-        const audio = await getAudio(data.id);
-        if (audio) {
-          setAudio(audio);
-        }
-      });
-    }
+    startTransition(async () => {
+      const audio = await getAudio(data.id);
+      if (audio) {
+        setAudio(audio);
+        setIsBookmarked(data.isBookmarked);
+      }
+    });
   };
   return (
     <button
