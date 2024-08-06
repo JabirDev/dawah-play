@@ -10,10 +10,10 @@ const SidebarBrand = ({ isSmall }: { isSmall: boolean }) => {
       aria-label="Homepage URL"
       className="my-auto flex h-14 items-center px-4 lg:gap-4"
     >
-      <BrandIcons.logo className="h-5 w-5 lg:h-6 lg:w-6" />
+      <BrandIcons.logo className="h-6 w-6" />
       <Large
         className={cn(
-          "hidden font-bold opacity-95 lg:inline-block",
+          "ml-1 hidden font-bold opacity-95 lg:inline-block",
           isSmall && "lg:hidden",
         )}
       >

@@ -2,8 +2,8 @@
 import { AudioProps } from "@/types/audio";
 import ytdl from "@distube/ytdl-core";
 import { db } from "../../../drizzle";
-import { bookmarkTable, channelTable } from "../../../drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { channelTable } from "../../../drizzle/schema";
+import { eq } from "drizzle-orm";
 import { getMe } from "../user/me";
 import { getBookmark } from "../bookmark/get";
 
