@@ -41,6 +41,7 @@ const InputSearch = () => {
             type="submit"
             size="icon"
             variant="ghost"
+            aria-label="search button"
             className="text-input transition-all duration-200 ease-in-out hover:bg-transparent group-focus-within:text-primary"
           >
             <Search className="h-5 w-5" />

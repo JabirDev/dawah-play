@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     template: "%s — DawahPlay",
   },
   description:
+    process.env.META_DESCRIPTION ??
     "DawahPlay is a platform for listening to Islamic lectures without interruptions from ads, allowing you to immerse yourself in learning about Islamic culture. It's a free and open-source project, dedicated to providing a seamless and enriching experience. Dive into a world of knowledge and explore the beauty of Islam with DawahPlay.",
   authors: {
     name: "Taufan Fatahillah",
@@ -39,10 +40,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DawahPlay — Explore, Listen, and Grow in Islamic Wisdom",
     description:
+      process.env.META_DESCRIPTION ??
       "DawahPlay is a platform for listening to Islamic lectures without interruptions from ads, allowing you to immerse yourself in learning about Islamic culture. It's a free and open-source project, dedicated to providing a seamless and enriching experience. Dive into a world of knowledge and explore the beauty of Islam with DawahPlay.",
     images: ["/og.png"],
   },
   twitter: {
+    images: ["/og.png"],
     card: "summary_large_image",
   },
 };
