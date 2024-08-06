@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
-import PodcastPlayer from "@/components/player";
 import Providers from "@/providers";
 
 const nunito = Nunito({ subsets: ["latin"] });
@@ -24,7 +23,6 @@ export default function RootLayout({
       >
         <Providers>
           {children}
-          <PodcastPlayer />
           <Script
             src="https://accounts.google.com/gsi/client"
             strategy="beforeInteractive"

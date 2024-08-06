@@ -171,14 +171,25 @@ const PodcastPlayer = () => {
   }, []);
 
   useEffect(() => {
+    const audioElement = audioRef.current;
+    const btnPlay = buttonPlayRef.current;
     const play = searchParams.get("play");
     if (play) {
       const handlePlay = async () => {
         const audio = await getAudio(play);
         const bookmark = await getBookmark(play);
-        if (audio) {
+        if (audio && audioElement) {
           setAudio(audio);
           setIsBookmarked(bookmark.data ? true : false);
+          document.addEventListener(
+            "onClick",
+            () => {
+              audioElement.play().then(() => {
+                setIsPlaying(true);
+              });
+            },
+            { once: true },
+          );
         }
       };
       handlePlay();
@@ -217,7 +228,6 @@ const PodcastPlayer = () => {
           className="hidden"
           onLoadedMetadata={handleLoadedMetadata}
           onEnded={handleAudioEnded}
-          controls={false}
           autoPlay
         />
         <div className="flex items-center gap-4 max-md:hidden">
