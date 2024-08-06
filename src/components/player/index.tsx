@@ -100,9 +100,12 @@ const PodcastPlayer = () => {
     const audioElement = audioRef.current;
     if (audio?.audioUrl) {
       if (audioElement) {
-        audioElement.play().then(() => {
-          setIsPlaying(true);
-        });
+        audioElement
+          .play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => setIsPlaying(false));
       }
     } else {
       audioElement?.pause();
