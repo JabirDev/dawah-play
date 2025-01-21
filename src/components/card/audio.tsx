@@ -49,16 +49,17 @@ const AudioCard: FC<AudioCardProps> = ({ data, channel, index }) => {
         "flex w-full cursor-pointer items-center overflow-hidden rounded-md p-4 transition-all duration-200 ease-in-out hover:bg-primary/10",
         isPlaying && "bg-primary/10",
       )}
+      title={data.title}
     >
       <h2
         className={cn(
-          "flex-1 truncate border-none p-0 text-start text-lg",
+          "w-[85%] truncate border-none p-0 text-start text-lg",
           isPlaying && "text-primary",
         )}
       >
         {index + 1}. {data.title}
       </h2>
-      <div className="ml-auto flex items-center gap-2 pl-4">
+      <div className="ml-auto flex items-center gap-2">
         {isPending && !isPlaying && (
           <Loader2 className="h-4 w-4 animate-spin" />
         )}

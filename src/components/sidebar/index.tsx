@@ -25,9 +25,9 @@ const SidebarWrapper = ({
             <SidebarMenu isSmall={isSmall} />
           </div>
         </aside>
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1">
           <NavbarWrapper />
-          {children}
+          <div className="w-full overflow-hidden">{children}</div>
         </main>
       </div>
       <IframeAPI />
