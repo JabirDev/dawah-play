@@ -10,13 +10,24 @@ import {
 } from "./routes";
 
 export async function middleware(request: NextRequest) {
+  const getCookie = async (): Promise<string | null> => {
+    const cookieData = request.headers.get("cookie");
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        resolve(cookieData);
+      }, 1000),
+    );
+  };
+
+  const cookieData = await getCookie();
+
   const { data: session } = await betterFetch<Session>(
     "/api/auth/get-session",
     {
       baseURL: request.nextUrl.origin,
       headers: {
         //get the cookie from the request
-        cookie: request.headers.get("cookie") || "",
+        cookie: cookieData || "",
       },
     },
   );
