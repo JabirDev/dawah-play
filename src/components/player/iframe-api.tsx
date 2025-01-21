@@ -240,13 +240,13 @@ const IframePlayer = (audio: AudioProps) => {
             <Button
               disabled={isBuffering}
               onClick={togglePlayPause}
-              variant="ghost"
+              size={"icon"}
               className="rounded-full"
             >
               {isBuffering ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : isPlaying && !isEnded ? (
-                <Pause className="h-5 w-5" />
+                <Pause className="h-5 w-5" strokeWidth={2} />
               ) : (
                 <Play className="h-5 w-5" />
               )}
