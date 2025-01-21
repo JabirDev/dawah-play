@@ -39,7 +39,7 @@ export default function SignInForm() {
         console.log("SIGN_IN:", response.error.message);
         toast.error(response.error.message);
       } else {
-        redirect("/dashboard");
+        redirect("/");
       }
     });
   }
