@@ -1,9 +1,10 @@
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 import { gender, role } from ".";
-import { z } from "zod";
 
-export const user = pgTable("user", {
-  id: text("id").primaryKey(),
+const dawahPlaySchema = pgSchema("dawahplay");
+
+export const user = dawahPlaySchema.table("user", {
+  id: text("id").primaryKey().unique(),
   name: text("name").notNull(),
   username: text("username").unique(),
   email: text("email").notNull().unique(),

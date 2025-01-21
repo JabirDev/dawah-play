@@ -1,8 +1,10 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgSchema, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from ".";
 
-export const session = pgTable("session", {
-  id: text("id").primaryKey(),
+const dawahPlaySchema = pgSchema("dawahplay");
+
+export const session = dawahPlaySchema.table("session", {
+  id: text("id").primaryKey().unique(),
   expiresAt: timestamp("expiresAt").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("createdAt").notNull(),

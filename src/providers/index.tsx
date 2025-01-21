@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
+import AudioProvider from "./audio";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +10,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         showSpinner={false}
         color="hsl(var(--primary))"
       />
-      {children}
+      <AudioProvider>{children}</AudioProvider>
       <Toaster position="top-center" />
     </>
   );
